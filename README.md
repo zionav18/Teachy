@@ -1,69 +1,93 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <meta name="description" content="Affordable and professional web design">
-	  <meta name="keywords" content="web design, affordable web design, professional web design">
-  	<meta name="author" content="Brad Traversy">
-    <title>Acme Web Deisgn | Welcome</title>
-    <link rel="stylesheet" href="./css/style.css">
-  </head>
-  <body>
-    <header>
-      <div class="container">
-         <div id="branding">
-          <img src="./img/logo.png">
-        </div>
-        <nav>
-          <ul>
-            <li> <a href="FAQ.html">שאלות ותשובות</a></li>
-            <li> <a href="#">עלינו</a></li>
-            <li class="current"> <a href="index.html">עמוד הבית</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+<?php
+include('config.php');
+session_start();
+require_once __DIR__ . '/src/Facebook/autoload.php'; 
 
-    <section id="showcase">
-      <div class="container">
-        <h1>כשהידע של השכן  ירוק יותר</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu luctus ipsum, rhoncus semper magna. Nulla nec magna sit amet sem interdum condimentum.</p>
-      </div>
-    </section>
+if ($db->connect_error){
+  die('error: ' .$db->connect_error);
+}
+$fb = new Facebook\Facebook([
+  'app_id' => '1973583292970708',
+  'app_secret' => 'b7b4f731fa9b451fbc9fa62c8058980a',
+  'default_graph_version' => 'v2.12',
+  ]);
+$helper = $fb->getRedirectLoginHelper();
+$permissions = ['email']; 
+  
+try {
+  if (isset($_SESSION['facebook_access_token'])) {
+    $accessToken = $_SESSION['facebook_access_token'];
+  } else {
+      $accessToken = $helper->getAccessToken();
+  }
+} catch(Facebook\Exceptions\FacebookResponseException $e) {
+  // When Graph returns an error
+  echo 'Graph returned an error: ' . $e->getMessage();
+    exit;
+} catch(Facebook\Exceptions\FacebookSDKException $e) {
+  // When validation fails or other local issues
+  echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    exit;
+ }
+if (isset($accessToken)) {
+  if (isset($_SESSION['facebook_access_token'])) {
+    $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
+  } else {
+    // getting short-lived access token
+    $_SESSION['facebook_access_token'] = (string) $accessToken;
+      // OAuth 2.0 client handler
+    $oAuth2Client = $fb->getOAuth2Client();
+    // Exchanges a short-lived access token for a long-lived one
+    $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook_access_token']);
+    $_SESSION['facebook_access_token'] = (string) $longLivedAccessToken;
+    // setting default access token to be used in script
+    $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
+  }
+  // redirect the user back to the same page if it has "code" GET variable
+  if (isset($_GET['code'])) {
+    header('Location: ./');
+  }
+  // getting basic info about user
+  try {
+    $profile_request = $fb->get('/me?fields=name,first_name,last_name,email');
+    $profile = $profile_request->getGraphNode()->asArray();
+  } catch(Facebook\Exceptions\FacebookResponseException $e) {
+    // When Graph returns an error
+    echo 'Graph returned an error: ' . $e->getMessage();
+    session_destroy();
+    // redirecting user back to app login page
+    header("Location: ./");
+    exit;
+  } catch(Facebook\Exceptions\FacebookSDKException $e) {
+    // When validation fails or other local issues
+    echo 'Facebook SDK returned an error: ' . $e->getMessage();
+    exit;
+  }
+  $name=$profile['name'];
+  $id=$profile['id'];
+  $first_name=$profile['first_name'];
+  $temp="SELECT id FROM users WHERE id='$id'";
+  $checkResult=mysqli_query($db,$temp);
+  if (mysqli_num_rows($checkResult)>0){
+    $_SESSION['login_user'] = $name;
+         header("location: profile.php");
+  }
+  else{
+   $sql = "INSERT INTO users(id,name,token)
+  VALUES ('{$id}', '{$name}', '{$accessToken}')";
+  if ($db->query($sql) === TRUE) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $sql . "<br>" . $db->error;
+}
+}
 
-    <section id="newsletter">
-    <div class="container">
-        <h1>כניסה לחשבון שלך</h1>
-    </div>
-        <form action="https://zionna.mtacloud.co.il/fbtest/index.php">
-          <button type="submit" class="button_1">התחברות</button>
-        </form>
-    </section>
+$db->close();
+} else {
+  $loginUrl = $helper->getLoginUrl('https://zionna.mtacloud.co.il/fbtest/login.php', $permissions);
+  echo '<a href="' . $loginUrl . '">Log in with Facebook!</a>';
 
-    <section id="boxes">
-      <div class="container">
-        <div class="box">
-          <img src="./img/books.png">
-          <h3>מאגר ידע</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mi augue, viverra sit amet ultricies</p>
-        </div>
-        <div class="box">
-          <img src="./img/people.png">
-          <h3>שיתוף סיכומים</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mi augue, viverra sit amet ultricies</p>
-        </div>
-        <div class="box">
-          <img src="./img/blackboard.png">
-          <h3>שיעורים פרטיים</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mi augue, viverra sit amet ultricies</p>
-        </div>
-      </div>
-    </section>
+}
 
-    <footer>
-      <p>נוצר ע״ רעות גל וציון האלופים &copy; 2018</p>
-    </footer>
-  </body>
-</html>
+
+ 
