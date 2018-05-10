@@ -174,6 +174,138 @@
 
 </body>
 </html>
+<?php
+include('session.php');
+?>
 
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Affordable and professional web design">
+	  <meta name="keywords" content="web design, affordable web design, professional web design">
+  	<meta name="author" content="Brad Traversy">
+    <title>TEACHY- אתר לחיפוש ושיתוף ידע</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <style>
+.user-row {
+    margin-bottom: 14px;
+}
+
+.user-row:last-child {
+    margin-bottom: 0;
+}
+
+.dropdown-user {
+    margin: 13px 0;
+    padding: 5px;
+    height: 100%;
+}
+
+.dropdown-user:hover {
+    cursor: pointer;
+}
+
+.table-user-information > tbody > tr {
+    border-top: 1px solid rgb(221, 221, 221);
+}
+
+.table-user-information > tbody > tr:first-child {
+    border-top: 0;
+}
+
+
+.table-user-information > tbody > tr > td {
+    border-top: 0;
+}
+.toppad
+{margin-top:20px;
+}
+
+	</style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <img src="./img/logo.png">
+        </div>
+        <nav>
+          <ul>
+           <li> <a href="">התנתק</a></li>
+            <li> <a href="FAQ.html">שאלות ותשובות</a></li>
+            <li> <a href="#">עלינו</a></li>
+            <li class="current"> <a href="index.php">עמוד הבית</a></li>
+			<li> <a href="Search1.html">חיפוש ידע</a></li>
+			<li> <a href="Share1.html">שיתוף ידע</a></li>
+			<li> <a href="">הפרופיל שלך</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+<div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+   
+          <div class="panel panel-info">
+            <div class="panel-heading" style="padding:20px">
+              <h3  class="panel-title" style="float:right">הפרופיל האישי שלך</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="https://zionna.mtacloud.co.il/fbtest/img/<?php echo $user_picture; ?>.jpg" class="img-circle img-responsive"> </div>
+                <div class=" col-md-9 col-lg-9 "> 
+                  <table class="table table-user-information">
+                    <tbody>
+                      <tr>
+                        <td><?php echo $login_session; ?></td>
+                        <td>:שם משתמש</td>
+                      </tr>
+                      <tr>
+                        <td>06/23/2013</td>
+                        <td>:טלפון</td>
+                      </tr>
+                      <tr>
+                        <td><?php echo $user_credit; ?></td>
+                        <td>:קרדיט</td>
+                      </tr>
+                         
+                       <tr>
+                        <td>:סטאטוס</td>
+                        <td>Female</td>
+                      </tr>
+                        <tr>
+                        <td>:השיעורים שלי</td>
+                        <td>Kathmandu,Nepal</td>
+                      </tr>
+                     
+                    </tbody>
+                  </table>
+                  
+                  <a href="#" class="btn btn-primary">הצג את השיעורים שלי</a>
+                  <a href="#" class="btn btn-primary">Team Sales Performance</a>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+     <footer>
+      <p>נוצר ע״ רעון גל וציון האלופים &copy; 2018</p>
+    </footer>
+  </body>
+</html>
+
+
+  </body>
+  </html>
 
  
