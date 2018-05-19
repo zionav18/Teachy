@@ -306,6 +306,103 @@ include('session.php');
 
 
   </body>
-  </html>
+ </html>
+ 
+ <?php
+     include('config.php');
+     include('session.php');
+
+?>
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+    <head>
+
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Teachy| Private Teacher Search</title>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <style>
+
+      .imgStatus
+      {
+        float:right;
+        size: 5px;
+      }
+
+    </style>
+
+
+</head>
+
+<body>
+	<header>
+		<div class="container">
+
+         <div id="branding">
+          <img src="./img/logo.png">
+         </div>
+
+         <div id="branding2">
+          <a href="#">
+            <img src="./img/p.png">
+          </a> 
+        </div>
+
+          <ul class="nav">
+            <li>  <a href="share.html">שיתוף ידע</a></li>
+            <li class="current"> <a href="#">חיפוש ידע</a></li>
+          </ul>
+
+          <?php if ($user_status == "מתחילן") echo '<img class="imgStatus" src="./img/status/baby.png"></img>';
+          elseif ($user_status == "נכנס לעניינים") echo '<img class="imgStatus" src="./img/status/student.png"></img>';
+          elseif ($user_status == "בוס") echo '<img class="imgStatus" src="./img/status/boss.png"></img>';
+          elseif ($user_status == "צ'יף") echo '<img class="imgStatus" src="./img/status/chief.png"></img>';
+          elseif ($user_status == "רוקסטאר") echo '<img class="imgStatus" src="./img/status/rockstar.png"></img>';
+
+?>
+
+      </div>
+    </div>
+    </header>
+
+    <form method="post" action="afterSearch.php">
+      <div class="container"> 
+
+         <table>
+    <tr> 
+      <th>שם המורה</th>
+      <th>סטטוס</th>
+      <th>טלפון</th>
+     
+    </tr>
+    <tbody id="myTable">
+
+        <?php
+        $course_id=$_POST['add'];
+
+      $result=mysqli_query($db,"SELECT * from users INNER JOIN Private_teachers on users.id=Private_teachers.userID AND Private_teachers.courseID=$course_id");
+
+      if ($result->num_rows>0){ 
+                while($row=$result->fetch_assoc()){
+                    echo '<tr><td>'.$row['name'].'</td>';
+                    echo '<td>'.$row['status'].'</td>';
+                    echo '<td>'.$row['phoneNumber'].'</td></tr>';
+
+                  }
+                }
+                    
+              ?>
+       </tbody>
+       </table>
+       </div>
+      </form>
+      
+</body>
+</html>
 
  
