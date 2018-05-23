@@ -307,5 +307,106 @@ include('session.php');
 
   </body>
   </html>
+  <?php
+     include('config.php');
+     include('session.php');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>TEACHY- אתר לחיפוש ושיתוף ידע</title>    
+	<link rel="stylesheet" href="./css/style.css">
+  <style>
+ .form{
+     
+    background-color: #f2f2f2;
+    padding: 10px;
+    margin-bottom:100px;
+    margin-top:80px;
+    position:relative;
+    margin-left:500px;
+    color:black;
+    font-weight:bold;
+}
+input[type=file]{
+  margin left:70px;
+}
+input[type=text]{
+  margin right:30px;
+}
+h6{
+	float:right;
+	margin-top: 30px;
+	margin-right:150px;
+}
+
+</style>
+  </head>
+<body>
+	<header>
+
+      <div class="container">
+
+       <div id="branding">
+          <a href="profile.php">
+          <img src="./img/logo.png">
+        </a>
+         </div>
+
+         <div id="branding2">
+          <a href="userProfile.php">
+            <img src="./img/p.png">
+          </a> 
+        </div>
+
+          <ul class="nav">
+            <li> <a href="#">שיעורים פרטיים</a></li>
+            <li class="current"> <a href="Share.html">שיתוף ידע</a></li>
+            <li> <a href="Search.html">חיפוש ידע</a></li>
+          </ul>
+
+      </div>
+    </header>
+    <?php
+$selected_id= $_POST['add'];
+$result=mysqli_query($db,"SELECT * from courses where id='$selected_id'");
+$row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+  $name_of_course= $row['name'];
+
+
+?>
+ <h6> שם הקורס: <?php echo $name_of_course; ?> </h6>
+<form action="afterUpload.php" method='post' enctype="multipart/form-data" class="form">
+<input name="courseName" type="hidden" value=<?php echo $name_of_course; ?> />
+<input name="courseId" type="hidden" value=<?php echo $selected_id; ?>/>
+<input name="user_id" type="hidden" value=<?php echo $user_id; ?> />
+<p>:אנא בחר את סוג הקובץ</p>
+<select required name="description_entered"> <br><br>
+  <option value="">:לא נבחר ערך</option>
+  <option value="עבודה">עבודה</option>
+  <option value="סיכום">סיכום</option>
+  <option value="סרטון הדרכה">סרטון הדרכה</option>
+  <option value="מבחן פתור">מבחן פתור</option>
+</select>
+<div class="upload_b">
+<input type="file" name="file"/><br><br>
+</div>
+<input type="submit" name="submit" value="העלה"/>
+
+</form>
+<footer>
+          <ul class="nav">
+            <li> <a href="FAQ.html">שאלות ותשובות</a></li>
+            <li> <a href="#">עלינו</a></li>
+          </ul>
+    </footer>
+
+</body>
+</html>
 
  
