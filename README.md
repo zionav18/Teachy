@@ -409,4 +409,269 @@ $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
 </body>
 </html>
 
+ <?php
+     include('config.php');
+     include('session.php');
+     
+?>
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+    <head>
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<title>TEACHY- אתר לחיפוש ושיתוף ידע</title>    
+	<link rel="stylesheet" href="./css/style.css">
+  <style>
+          .show_more {
+    cursor: pointer;
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+    font-weight:bold;
+}
+.loding {
+    background-color: #e9e9e9;
+    border: 1px solid;
+    border-color: #c6c6c6;
+    color: #333;
+    font-size: 12px;
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+    outline: 0;
+    font-weight:bold;
+}
+.loding_txt {
+    background-image: url(loading.gif);
+    background-position: left;
+    background-repeat: no-repeat;
+    border: 0;
+    display: inline-block;
+    height: 16px;
+    padding-left: 20px;
+}
+
+.img-permissions{
+  width: 30%;
+}
+
+table.design {
+    table-layout: fixed;
+    width: 100%;    
+}
+
+
+
+@media(max-width: 768px){
+.img-permissions{
+    float:right;
+    text-align:center;
+    width:100%;
+
+  }
+
+.table-responsive {
+    min-height: .01%;
+    overflow-x: auto;
+    width:55%;
+}
+
+@media screen and (max-width: 767px) {
+    .table-responsive {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-y: hidden;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        border: 1px solid #ddd;
+    }
+    .table-responsive > .table {
+        margin-bottom: 0;
+    }
+    .table-responsive > .table > thead > tr > th,
+    .table-responsive > .table > tbody > tr > th,
+    .table-responsive > .table > tfoot > tr > th,
+    .table-responsive > .table > thead > tr > td,
+    .table-responsive > .table > tbody > tr > td,
+    .table-responsive > .table > tfoot > tr > td {
+        white-space: nowrap;
+    }
+}
+  </style>
+	<script>
+function check(){
+ alert("<?PHP check(); ?>");
+ }
+ function checkStatus(){
+ alert("<?PHP checkStatus(); ?>");
+ }
+ function phpQuery(x){
+   var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "update.php", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      alert(xhttp.responseText);
+      window.location.reload();
+    }
+  };
+
+  xhttp.send("name="+x);
+ }
+
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $(document).on('click','.show_more',function(){
+        var ID = $(this).attr('id');
+        var courseID= document.getElementById("request").innerHTML;
+        $('.show_more').hide();
+        $('.loding').show();
+        $.ajax({
+            type:'POST',
+            url:'files_results.php',
+            data: {"id": ID, "courseId": courseID},
+            success:function(html){
+                $('#show_more_main'+ID).remove();
+                $('.postList').append(html);
+            }
+        });
+    });
+});
+</script>
+	
+	 </head>
+<body>
+  <header>
+   <div class="container">
+         <div id="branding">
+          <a href="profile.php">
+          <img src="./img/logo.png">
+        </a>
+      </div>
+         
+          <ul class="nav">
+            <li>  <a href="userProfile.php" style="color:#000000; text-decoration:underline">פרופיל אישי</a></li>
+            <li>  <a href="Share.html">שיתוף ידע</a></li>
+            <li class="current"> <a href="Search.html">חיפוש ידע</a></li>
+            <li> <a href="comments.php">המלצות</a></li>
+            <li> <a href="logout.php">התנתק</a></li> 
+          </ul>
+
+      </div>
+    </div>
+    </header>
+<div class="container">
+        <br>
+        
+      <?php
+      $selected_course_id = $_POST['add'];
+      $resultCourse=mysqli_query($db,"SELECT * from courses where id=$selected_course_id");
+      $rowCourse=$resultCourse->fetch_assoc();
+      $courseName=$rowCourse['name'];
+      
+      ?>
+      <h3> שם הקורס: <?php echo $courseName; ?></h3>
+
+      <h2> יתרת הקרדיט שלך היא: <?php echo $user_credit; ?></h2>
+
+        <p id="request" style="display: none;"><?php echo $selected_course_id; ?></p>
+        <div class="postList">
+          <?
+    		$query = "SELECT * FROM Uploaded_files WHERE courseId='$selected_course_id' AND Status='אושר' ORDER BY id DESC LIMIT 8";
+    		$result=mysqli_query($db,$query);
+
+    		if ($result->num_rows>0){ ?>
+     <div class="table-responsive">     
+    <table class="design">
+    <tr> 
+      <th> הרשאה</th>
+      <th>שם הקובץ</th>
+      <th>סוג הקובץ</th>
+      <th>עלות</th>
+      <th>פעולה</th>
+    </tr>
+    <?
+                while($row=$result->fetch_assoc()){
+                  $postID=$row['id'];
+                	if ($row['descreption'] == "סרטון הדרכה" && ($user_status=='מתחילן' || $user_status=='חובבן')){
+                    echo '<tr><td><img src="./img/locked.png" class="img-permissions"</img></td>';
+                    echo '<td>'.$row['file'].'</td>';
+                    echo '<td>'.$row['descreption'].'</td>';
+                    echo '<td>'.$row['Value'].'</td>';
+                    echo '<td><button class="button_5" onclick="checkStatus()">הורד</button></td></tr>';
+                    }
+
+
+			         else
+                    { 
+                      if($row['Value']>$user_credit){
+                      echo '<tr><td><img src="./img/unlocked.png" class="img-permissions"</img></td>';
+                     echo '<td>'.$row['file'].'</td>';
+                    echo '<td>'.$row['descreption'].'</td>';
+                    echo '<td>'.$row['Value'].'</td>';
+                    echo '<td><button class="button_5" onclick="check()">הורד</button></td></tr>';
+                  }
+
+                  else
+                    {
+                    	
+                      echo '<tr><td><img src="./img/unlocked.png" class="img-permissions"</img></td>';
+                    	echo '<td>'.$row['file'].'</td>';
+                    	echo '<td>'.$row['descreption'].'</td>';
+                    	echo '<td>'.$row['Value'].'</td>';
+                    	echo '<td><a style="text-decoration: none;" href="https://zionna.mtacloud.co.il/fbtest/upload/'.$row['file'].'" download><button class="button_5" onclick="phpQuery('.$row['Value'].')">הורד</button></a></td></tr>';
+                    }
+
+                    	
+                    }
+                    	
+                 }
+?>
+              </table>
+               <div class="show_more_main" id="show_more_main<?php echo $postID; ?>">
+                <span id="<?php echo $postID; ?>" class="show_more" title="Load more posts">הצג עוד קבצים</span>
+                <span class="loding" style="display: none;"><span class="loding_txt">טוען...</span></span>
+                </div>
+              <?     
+            }
+        else
+          echo "אין קבצים זמינים להורדה בקורס זה";?>
+      </div>
+
+      <?
+
+            function check()
+{
+echo "אין ביתרתך מספיק קרדיט להורדת הקובץ";
+}
+          function checkStatus(){
+            echo "ההורדה נכשלה! אינך בסטאטוס המאפשר הורדת סרטון הדרכה";
+          }
+
+
+
+    ?>
+            </div>
  
+    <footer>
+         <ul class="nav">
+            <li> <a href="FAQ_after_login.html">שאלות ותשובות</a></li>
+           <li> <a href="about_after_login.html">עלינו</a></li>
+            <li> <a href="Prices.html">מחירון</a></li>
+          </ul>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
